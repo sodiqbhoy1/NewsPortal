@@ -4,20 +4,32 @@ import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get('https://newsapi.org/v2/top-headlines?country=us&apiKey=5abfb9494993428594f7ac6f5f14ae95')
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://newsapi.org/v2/top-headlines?country=us&apiKey=5abfb9494993428594f7ac6f5f14ae95');
         setData(response.data.articles);
-        // console.log(response.data.articles);
-      });
+      } catch (err) {
+        setError("Failed to fetch news.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const readmore = (article) => {
     navigate(`/news/${article.title}`, { state: { article } });
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="bg-gray-50 py-10">
