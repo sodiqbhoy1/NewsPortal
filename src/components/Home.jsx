@@ -14,38 +14,28 @@ const Home = () => {
         const response = await axios.get(
           'https://api.thenewsapi.com/v1/news/top?api_token=y4rv1tjXJMslmoKX782WqMbTNnv1oCOZtxMh3R3L&locale=us&limit=3'
         );
-        
-        // Ensure response structure is correct
+
         if (response.data && response.data.data) {
           setData(response.data.data); // Adjust to match actual structure
         } else {
-          setError("No news articles available.");
+          setError('No news articles available.');
         }
       } catch (err) {
-        // Log the detailed error for debugging
         console.error('Axios error:', err);
-  
-        // Handle specific error types
         if (err.response) {
-          // The request was made, and the server responded with a status code
-          console.error('Response error:', err.response.data);
           setError(`Error: ${err.response.data.message || 'Unable to fetch data.'}`);
         } else if (err.request) {
-          // The request was made, but no response was received
-          console.error('Request error:', err.request);
-          setError("No response received. Please try again later.");
+          setError('No response received. Please try again later.');
         } else {
-          // Something happened in setting up the request
           setError(`Request setup error: ${err.message}`);
         }
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   const readMore = (article) => {
     navigate(`/news/${article.title}`, { state: { article } });
@@ -54,7 +44,7 @@ const Home = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
-        <p className="text-2xl font-semibold text-gray-600">Loading...</p>
+        <div className="loader"></div> {/* Display the loader */}
       </div>
     );
   }
@@ -77,7 +67,7 @@ const Home = () => {
               key={index}
               className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105"
             >
-              {item.image_url && ( // Adjust based on actual image field name
+              {item.image_url && (
                 <img
                   src={item.image_url}
                   alt={item.title || 'News Image'}
